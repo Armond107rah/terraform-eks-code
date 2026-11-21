@@ -3,8 +3,8 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      #  Fix version version of the AWS provider
-      version = "= 5.3.0"
+      # access_config on aws_eks_cluster requires 5.33.0 or newer
+      version = ">= 5.33.0, < 6.0.0"
     }
   }
 }

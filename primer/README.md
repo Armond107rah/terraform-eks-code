@@ -25,9 +25,8 @@ A business needs applications that can remain available, handle change, and reco
 | Different teams deploy applications differently | Declarative manifests standardize deployment | Repeatability, reviewability, and easier collaboration |
 | Operations teams need to understand failures | Health probes, events, status, and logs | Faster troubleshooting |
 
-**Important distinction:** Kubernetes does not automatically guarantee uptime, security, autoscaling, or zero downtime. Those outcomes depend on workload design, node capacity, network architecture, probes, permissions, and operational practices. In this lab, the NGINX Deployment requests two replicas and uses readiness and liveness probes; it does not configure a Horizontal Pod Autoscaler.
 
-**Why Amazon EKS?** EKS provides a managed Kubernetes control plane, reducing the operational burden of running the control-plane components. The team still owns cluster access, worker-node configuration, Kubernetes workloads, networking decisions, security controls, and cost management.
+**Why Amazon EKS?** EKS provides a managed Kubernetes control plane, reducing the operational burden of running the control-plane components. The team still owns cluster access, worker-node configuration, and Kubernetes workloads.
 
 ## Architecture
 
@@ -181,7 +180,7 @@ Only after reviewing **every change**, the target AWS account/region, and the on
 terraform apply final-eks.tfplan
 ```
 
-Applying a saved plan does **not** prompt again for confirmation. Never commit the plan file or Terraform state to GitHub.
+Applying a saved plan does not prompt for confirmation again. Never commit the plan file or Terraform state to GitHub.
 
 ### 3. Connect to EKS and verify the nodes
 
@@ -260,12 +259,11 @@ Document only checks that actually succeeded in your AWS account and GitHub bran
 
 ![GitHub Actions CI checks](./tflab1/screenshots/03-github-actions-success.png)
 
-> Screenshot images must be captured from your actual environment, stored at these paths, and checked for sensitive account information before committing. If a screenshot is missing, remove or defer its link until the file is added.
 
 ## Security and operational decisions
 
 - **Private worker nodes:** EC2 worker nodes are placed in private subnet ranges rather than directly exposed to the internet.
-- **IAM role separation:** EKS control plane and worker nodes have separate IAM roles. For this learning version, the VPC CNI policy may be attached to the node role; a production improvement is to use dedicated Pod Identity or IRSA permissions.
+- **IAM role separation:** EKS control plane and worker nodes have separate IAM roles. For this learning version, the VPC CNI policy may be attached to the node role; in production, use dedicated Pod Identity or IRSA permissions.
 - **API access:** The EKS public API endpoint is intended to be restricted to an administrator `/32` IPv4 CIDR, with private endpoint access also enabled. Review this against your actual Terraform state and current IP.
 - **Network controls:** Internet Gateway, route tables, NAT, and security groups each address different networking needs; a named “private subnet” is not a security guarantee by itself.
 - **CI/CD scope:** GitHub Actions performs configuration checks, not automatic deployment. Future CD should use short-lived AWS identity credentials via OIDC and guarded approvals.
@@ -298,7 +296,7 @@ Verify `terraform state list` is empty and check AWS for any remaining chargeabl
 
 ## Lessons learned and future improvements
 
-The project demonstrates that a functional Kubernetes platform is more than a cluster creation command. The platform depends on well-defined networks, correct IAM permissions, private-node egress, reliable scheduling, application health checks, validation, and cost-aware teardown.
+The project demonstrates that a functional Kubernetes platform is more than a cluster creation command. The platform depends on well-defined networks, including correct IAM permissions, private-node egress, reliable scheduling, application health checks, and cost optimization. 
 
 Logical next steps include reusable Terraform modules, a remote state backend with locking, private AWS VPC endpoints, per-AZ NAT resilience, dedicated VPC CNI identity, AWS Load Balancer Controller with HTTPS, stronger workload security, autoscaling, monitoring, and an approval-gated GitHub Actions deployment pipeline.
 

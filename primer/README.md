@@ -259,7 +259,7 @@ Document only checks that actually succeeded in your AWS account and GitHub bran
 
 ![GitHub Actions CI checks](./tflab1/screenshots/03-github-actions-success.png)
 
-
+**To View Evidence** Please go to the tflab1 folder --> click on screenshots for the results!
 ## Security and operational decisions
 
 - **Private worker nodes:** EC2 worker nodes are placed in private subnet ranges rather than directly exposed to the internet.
